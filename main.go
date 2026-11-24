@@ -16,9 +16,9 @@ func GetDrvPath(target string, isFlake bool, isSystem bool) (string, error) {
 		}
 	} else {
 		if isSystem {
-			cmd = exec.Command("nix-instantiate", "<nixpkgs/nixos>", "-A", "system" ,"-I", "nixos-config="+target)
+			cmd = exec.Command("nix-instantiate", "<nixpkgs/nixos>", "-A", "system", "-I", "nixos-config="+target)
 		} else {
-			cmd = exec.Command("nix-instantiate", target)
+			cmd = exec.Command("nix-instantiate", "-E", "with import <nixpkgs> {}; callPackage "+target+" {}")
 		}
 	}
 	output, err  := cmd.Output()
