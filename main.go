@@ -29,8 +29,8 @@ func GetDrvPath(target string, isFlake bool, isSystem bool) (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-func IsHashInStore(outputHash string) bool {
-	cmd := exec.Command("nix", "store", "path-from-hash-part", outputHash)
+func IsOutputInStore(outPath string) bool {
+	cmd := exec.Command("nix", "path-info", "/nix/store/" + outPath)
 	_, err := cmd.Output()
 	if err != nil {
 		return false
