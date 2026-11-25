@@ -76,3 +76,12 @@ func IsOutputInCaches(outPath string, caches string, publicKeys string) (string,
 	}
 }
 
+func BuildDerivation(drvPath string, specificOutput string, caches string, publicKeys string) error {
+	cmd := exec.Command("nix", "build", drvPath + "^" + specificOutput,
+	"--option", "subtituters", caches,
+	"--option", "trusted-public-keys", publicKeys)
+
+	_, err := cmd.Output()
+	return err
+} 
+
