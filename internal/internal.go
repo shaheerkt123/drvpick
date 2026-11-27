@@ -30,6 +30,22 @@ func GetDrvPath(target string, isFlake bool, isSystem bool) (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
+func MakeDrvStructure(drvPath string) (Derivation, error) {
+	cmd := exec.Command("nix", "derivation", "show", drvPath)
+	jsonData, err := cmd.Output()
+	if err != nil {
+		return Derivation{}, fmt.Errorf("error running nix derivation show command: %w", err)
+	}
+
+	var drvMap NixDrvResponse
+	err = json.Unmarshal(jsonData, &drvMap)
+	if err != nil {
+		return drvMap.Derivations[drvPath[11:]], fmt.Errorf("error unmarshalling derivation json data: %w", err)
+	}
+
+	return drvMap.Derivations[drvPath[11:]], nil
+}
+
 func IsOutputInStore(outPath string) bool {
 	cmd := exec.Command("nix", "path-info", "/nix/store/" + outPath)
 	_, err := cmd.Output()
